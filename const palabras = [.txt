@@ -1,0 +1,86 @@
+const palabras = [
+  "lollygag",
+  "nonsense",
+  "doppelganger",
+  "ornitorrinco",
+  "cooked",
+  "salami",
+  "thundercats",
+  "malarkey",
+  "frito"
+];
+
+let palabraSecreta;
+let letrasAdivinadas;
+let intentos;
+
+const palabraElem = document.getElementById("palabra");
+const intentosElem = document.getElementById("intentos");
+const letrasDiv = document.getElementById("letras");
+const emojiElem = document.getElementById("emojiAhorcado");
+const botonReiniciar = document.getElementById("reiniciar");
+
+const emojisAhorcado = ["🙂", "😕", "😟", "😣", "😫", "😵", "💀"];
+
+function iniciarJuego() {
+  palabraSecreta = palabras[Math.floor(Math.random() * palabras.length)];
+  letrasAdivinadas = [];
+  intentos = 6;
+  emojiElem.textContent = emojisAhorcado[0];
+  mostrarPalabra();
+  crearBotones();
+  intentosElem.textContent = "Intentos restantes: " + intentos;
+}
+
+function mostrarPalabra() {
+  const palabraMostrada = palabraSecreta
+    .split("")
+    .map(letra => (letrasAdivinadas.includes(letra) ? letra : "_"))
+    .join(" ");
+  palabraElem.textContent = palabraMostrada;
+}
+
+function crearBotones() {
+  letrasDiv.innerHTML = "";
+  "abcdefghijklmnopqrstuvwxyz".split("").forEach(letra => {
+    const btn = document.createElement("button");
+    btn.textContent = letra;
+    btn.addEventListener("click", () => adivinarLetra(letra, btn));
+    letrasDiv.appendChild(btn);
+  });
+}
+
+function adivinarLetra(letra, boton) {
+  boton.disabled = true;
+
+  if (!letrasAdivinadas.includes(letra)) {
+    letrasAdivinadas.push(letra);
+    if (!palabraSecreta.includes(letra)) {
+      intentos--;
+      intentosElem.textContent = "Intentos restantes: " + intentos;
+      emojiElem.textContent = emojisAhorcado[6 - intentos];
+    }
+    mostrarPalabra();
+    verificarJuego();
+  }
+}
+
+function verificarJuego() {
+  if (!palabraElem.textContent.includes("_")) {
+    alert("🎉 ¡Ganaste! La palabra era: " + palabraSecreta);
+    desactivarBotones();
+  } else if (intentos === 0) {
+    alert("💀 Perdiste. La palabra era: " + palabraSecreta);
+    desactivarBotones();
+  }
+}
+
+function desactivarBotones() {
+  const botones = document.querySelectorAll("#letras button");
+  botones.forEach(b => b.disabled = true);
+}
+
+botonReiniciar.addEventListener("click", iniciarJuego);
+
+iniciarJuego();
+cr
